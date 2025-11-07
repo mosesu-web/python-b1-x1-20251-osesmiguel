@@ -45,27 +45,62 @@ filter = "a", este debe devolver 19, ya que en la segunda oración "¿Cómo est�
 el valor pasado como filtro y la oración tiene una longitud de la cadena de texto más larga. 
 """
 # Add your imports here
+from util_package.text_manager import TEXT, split_into_words, split_into_sentences
 
 
-
-def find_largest_word(text):
-    # Write here your code
-    pass
-
-
-def is_palindrome_word(word):
-    # Write here your code
-    pass
-
-
-def count_palindrome_words(text):
-    # Write here your code
-    pass
+def find_largest_word(text: str) -> str:
+    """
+    Busca la palabra más larga dentro de un texto y la devuelve.
+    """
+    words: list[str] = split_into_words(text)
+    max_word: str =''
+    for word in words:
+        if len(word) > len(max_word):
+            max_word = word
+    return max_word
 
 
-def find_size_largest_sentence(text, filter):
-    # Write here your code
-    pass
+def is_palindrome_word(word: str) -> bool:
+    """
+    Comprueba si un string es un palindromo.
+    Devuelte un valor True/False en función de si es o no un palindromo
+    """
+    word = word.casefold()
+    if len(word) < 2:
+        return True
+    return word[0] == word[-1] and is_palindrome_word(word[1:-1])
+
+
+def count_palindrome_words(text: str) -> int:
+    """
+    Divide un string en una lista de palabras y de frases y busca los palindromos dentro de esta lista.
+    Devuelve el número de palindromos encontrados
+    """
+    palindromes: set[str] = set()
+    words_list: list[str] = split_into_words(text)
+    sentences_list: list[str] = split_into_sentences(text, no_punctuation= True)  # Elimina los signos de puntuación.
+    for word in  words_list+sentences_list:
+        if is_palindrome_word(word) and len(word)>=3:
+            palindromes.add(word.casefold())
+    return len(palindromes)
+
+
+def find_size_largest_sentence(text: str, filter: str) -> int:
+    """
+    Divide un texto en oraciones y busca cual es la oración más larga
+    que contiene el valor de filter. Si no encuentra ninguna oración que
+    contenga el valor de filter, entonces devuelve un ValueError.
+    """
+    max_sentence: int = 0
+    sentences = split_into_sentences(text)
+
+    for sentence in sentences:
+        if (filter in sentence) and (len(sentence) > max_sentence):
+            max_sentence = len(sentence)
+    if max_sentence > 0:
+        return max_sentence
+    else:
+        raise ValueError(f'El filtro {filter} no esta presente en ninguna sentencia')
 
 
 # Si quieres probar tu código, descomenta las siguientes líneas y ejecuta el script
